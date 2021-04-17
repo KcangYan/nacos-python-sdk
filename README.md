@@ -1,6 +1,7 @@
 使用说明
 
 #导入sdk
+    pip install nacos-kcang 
     
     import nacos
     
