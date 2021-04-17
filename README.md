@@ -1,9 +1,10 @@
 使用说明
 
 #导入sdk
-    pip install nacos-kcang 
+
+    pip install KcangNacos 
     
-    import nacos
+    import KcangNacos.nacos as nacos
     
 #创建初始nacos连接对象
    
