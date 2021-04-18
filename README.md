@@ -63,3 +63,21 @@
            return consumerDemo.apiTest1()     
            
       customRequestClient方法自带负载均衡   
+      
+      客户端自带了一个 timeout 和 error fallback 函数，并且默认超时时间是3秒，如果你想自定义
+      
+      def errorFun():
+          return "自定义错误函数"
+      或者
+      def errorFun(*args):
+          for item in args:
+              print(item)
+          return "自定义错误"
+      
+      nacosClient = nacos.nacosBalanceClient(ip=nacosIp, port=nacosPort,
+                                       serviceName="python-provider",
+                                       group="dev", namespaceId="python",timeout=3,
+                                       timeOutFun=errorFun,fallbackFun=errorFun)
+      设置timeout为服务超时时间。
+      
+#服务熔断器会在下一个版本中更新出来。
