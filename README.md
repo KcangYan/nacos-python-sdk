@@ -2,7 +2,7 @@
 
 使用说明
 
-#导入sdk
+# 导入sdk
     
     在自己的项目中使用
     pip install KcangNacos 
@@ -12,11 +12,11 @@
     如果你下载了这个demo里的源代码的话
     import nacos
     
-#创建初始nacos连接对象
+## 创建初始nacos连接对象
    
     nacosServer = nacos.nacos(ip=nacosIp,port=nacosPort)
 
-#nacos远程配置中心
+## nacos远程配置中心
     
      nacosServer.config(dataId="demo-python.json",group="dev",tenant="python",myConfig=myConfig.GlobalConfig)
      执行以上代码即可启动加载远程配置中心，并实时监听配置中心变化，及时变更本地配置      
@@ -24,13 +24,13 @@
      myConfig.GlobalConfig为用户本地的配置类对象，必须是dict。     
      启动后会根据远程配置中心的json数据按键值装配到已导入的本地配置类里。
      
-#nacos服务注册
+## nacos服务注册
 
      nacosServer.registerService(serviceIp=myConfig.ip,servicePort=myConfig.port,serviceName="python-provider",
                             namespaceId="python",groupName="dev")
      执行以上代码即可启动nacos服务注册，会将实例注册进nacos注册中心
      
-#nacos进程健康检查
+## nacos进程健康检查
 
       nacosServer.healthyCheck()
       执行以上代码即可开启本地naocs进程的健康检查      
@@ -41,7 +41,7 @@
       可以利用 int(time.time()) - nacosServer.healthy 获得健康检查进程的执行时间，时间过长则认为挂掉了
       再执行一次这行代码就可以重新启动检查检查进程
      
-#nacos消费者
+## nacos消费者
  
       nacosClient = nacos.nacosBalanceClient(ip=nacosIp, port=nacosPort,
                                        serviceName="python-provider",
@@ -107,7 +107,7 @@
                                    timeOutFun=errorFun,fallbackFun=errorFun)
       设置timeout为服务超时时间。
       
-#熔断器
+# 熔断器
 
       在自己的项目中使用
       pip install KcangFuse
@@ -171,7 +171,7 @@
           return str(z)
 
 
-#限流器
+# 限流器
 
       在自己的项目中使用
       pip install KcangFuse
