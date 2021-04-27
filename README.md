@@ -7,7 +7,8 @@
 
 ### 使用说明
 
-# 导入sdk
+# 1. python nacos sdk
+## 导入sdk
     
     在自己的项目中使用
     pip install KcangNacos 
@@ -46,7 +47,7 @@
       可以利用 int(time.time()) - nacosServer.healthy 获得健康检查进程的执行时间，时间过长则认为挂掉了
       再执行一次这行代码就可以重新启动检查检查进程
      
-## nacos消费者
+# 2. python nacos 负载均衡消费者
  
       nacosClient = nacos.nacosBalanceClient(ip=nacosIp, port=nacosPort,
                                        serviceName="python-provider",
@@ -112,7 +113,7 @@
                                    timeOutFun=errorFun,fallbackFun=errorFun)
       设置timeout为服务超时时间。
       
-# 熔断器
+# 3. python 熔断器
 
       在自己的项目中使用
       pip install KcangFuse
@@ -176,7 +177,7 @@
           return str(z)
 
 
-# 限流器
+# 4. python 限流器
 
       在自己的项目中使用
       pip install KcangFuse
