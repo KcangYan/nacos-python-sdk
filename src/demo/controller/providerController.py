@@ -23,3 +23,9 @@ def main(app,myConfig:dict):
     def apiTest4():
         data_ = request.get_data().decode('utf-8')
         return data_+ "----" + str(port)
+
+    @app.route(Router + "/test5", methods=['GET'])
+    def apiTest5():
+        x = int(request.args.get("x"))
+        y = int(request.args.get("y"))
+        return str(x+y)

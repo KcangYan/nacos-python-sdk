@@ -1,4 +1,6 @@
 import consumerDemo
+from flask import request
+
 Router = '/consumer'
 def main(app):
     @app.route(Router + "/test1", methods=['GET'])
@@ -24,3 +26,9 @@ def main(app):
             "password": "pwd"
         }
         return consumerDemo.apiTest4(data)
+
+    @app.route(Router + "/test5", methods=['GET'])
+    def consumerTest5():
+        x = int(request.args.get("x"))
+        y = int(request.args.get("y"))
+        return consumerDemo.apiTest5(x=x, y=y)

@@ -205,35 +205,49 @@ class nacos:
         except:
             logging.exception("服务注册失败",exc_info=True)
 
+def fallbackFun():
+    return "request Error"
+def timeOutFun():
+    return "request time out"
+
 class nacosBalanceClient:
     def __init__(self,ip="127.0.0.1",port=8848,serviceName="",
-                      group="DEFAULT_GROUP",namespaceId="public"):
+                      group="DEFAULT_GROUP",namespaceId="public",timeout=6,
+                      fallbackFun=fallbackFun, timeOutFun=timeOutFun):
         self.ip = ip
         self.port = port
         self.serviceName = serviceName
         self.group = group
         self.namespaceId = namespaceId
         self.__LoadBalanceDict = {}
+        self.timeout = timeout
+        self.fallbackFun = fallbackFun
+        self.timeOutFun  = timeOutFun
 
-    def __doRequest(self,method,url,requestParamJson,args) :
+    def __doRequest(self,method,url,requestParamJson,*args,**kwargs) :
         if method == "GET" or method == "get":
             url = url + "/"
             for item in args:
                 url = url + str(item) + "/"
-            return requests.get(url[:-1]).text
+            url = url[:-1]
+            if kwargs.__len__() != 0:
+                url = url + "?"
+                for item in kwargs:
+                    url = url + str(item) + "=" + str(kwargs[item]) + "&"
+            return requests.get(url[:-1], timeout=self.timeout).text
         if method == "POST" or method == "post":
             if requestParamJson:
                 header = {"Content-type": "application/json;charset=utf-8"}
                 data = None
                 for item in args:
                     data = item
-                return requests.post(url,headers=header,data=json.dumps(data,ensure_ascii=False).encode("utf-8")).text
+                return requests.post(url,headers=header,data=json.dumps(data,ensure_ascii=False).encode("utf-8"), timeout=self.timeout).text
             else:
                 files = {}
                 for map in args:
                     for key in map:
                         files[key] = (None,map[key])
-                return requests.post(url,files=files).text
+                return requests.post(url,files=files, timeout=self.timeout).text
 
     def __getAddress(self,serviceName,group,namespaceId):
         getProviderUrl = "http://" + self.ip + ":" + str(self.port) + "/nacos/v1/ns/instance/list"
@@ -294,7 +308,7 @@ class nacosBalanceClient:
     def customRequestClient(self,method,url,
                             requestParamJson=False,https=False):
         def requestPro(f):
-            def mainPro(*args):
+            def mainPro(*args, **kwargs):
                 address = self.__loadBalanceClient(self.serviceName, self.group, self.namespaceId)
                 if address == "":
                     return
@@ -303,7 +317,15 @@ class nacosBalanceClient:
                         requestUrl = "https://" + address + url
                     else:
                         requestUrl = "http://" + address + url
-                    return self.__doRequest(method, requestUrl, requestParamJson, args)
+                    try:
+                        return self.__doRequest(method, requestUrl, requestParamJson, *args, **kwargs)
+                    except requests.ConnectTimeout:
+                        logging.exception("链接超时   ",exc_info=True)
+                        return self.timeOutFun(self.serviceName,self.group,self.namespaceId,method,url)
+                    except Exception as ex:
+                        logging.exception("链接失败   ", exc_info=True)
+                        return self.fallbackFun(self.serviceName,self.group,self.namespaceId,method,url,ex)
+            mainPro.__name__ = f.__name__
             return mainPro
         return requestPro
 
