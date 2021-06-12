@@ -188,7 +188,7 @@ class nacos:
             "groupName": groupName,
             "clusterName": clusterName,
             "ephemeral": ephemeral,
-            "metadata": metadata,
+            "metadata": json.dumps(metadata),
             "weight": weight,
             "enabled": enabled
         }
