@@ -234,7 +234,8 @@ class nacosBalanceClient:
                 url = url + "?"
                 for item in kwargs:
                     url = url + str(item) + "=" + str(kwargs[item]) + "&"
-            return requests.get(url[:-1], timeout=self.timeout).text
+                url = url[:-1]
+            return requests.get(url, timeout=self.timeout).text
         if method == "POST" or method == "post":
             if requestParamJson:
                 header = {"Content-type": "application/json;charset=utf-8"}
